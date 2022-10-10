@@ -15,6 +15,7 @@ class _HomeState extends State<Home> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Home"),
+          centerTitle: false,
           actions: <Widget>[
             IconButton(
               icon: const Icon(

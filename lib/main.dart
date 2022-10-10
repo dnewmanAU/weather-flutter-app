@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_flutter_app/routes/Home.dart';
 import 'package:weather_flutter_app/routes/onboarding.dart';
 
@@ -23,23 +24,33 @@ class MaterialAppWithTheme extends StatefulWidget {
 }
 
 class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
-
-  final onboarded = true; // TODO implement persistent app state
+  late SharedPreferences prefs;
+  Future<bool> _getOnboarded() async {
+    prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('onboarded') ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Weather App',
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.yellow,
-          foregroundColor: Colors.black,
+        title: 'Weather App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.yellow,
+            foregroundColor: Colors.black,
+          ),
         ),
-      ),
-      initialRoute: '/',
-      routes: {
-        '/': (_) => onboarded ? const Home() : const Onboarding(),
-      },
+        home: FutureBuilder<bool>(
+          future: _getOnboarded(),
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.data == false) {
+              return const Onboarding();
+            } else {
+              return const Home();
+            }
+          },
+        ),
     );
   }
 }
