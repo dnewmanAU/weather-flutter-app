@@ -44,6 +44,7 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
         home: FutureBuilder<bool>(
           future: _getOnboarded(),
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            // TODO error handling for async request
             if (snapshot.data == false) {
               return const Onboarding();
             } else {

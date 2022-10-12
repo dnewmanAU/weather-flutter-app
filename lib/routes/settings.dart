@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:weather_flutter_app/routes/onboarding.dart';
 import 'package:weather_flutter_app/routes/about.dart';
 
-class Options extends StatefulWidget {
-  const Options({Key? key}) : super(key: key);
+class Settings extends StatefulWidget {
+  const Settings({Key? key}) : super(key: key);
 
   @override
-  State<Options> createState() => _OptionsState();
+  State<Settings> createState() => _SettingsState();
 }
 
-class _OptionsState extends State<Options> {
+class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Options', semanticsLabel: 'Options Menu'),
+          title: const Text('Settings', semanticsLabel: 'Settings screen'),
           centerTitle: false,
         ),
         body: SingleChildScrollView(
@@ -41,8 +41,8 @@ class _OptionsState extends State<Options> {
                 subtitle: const Text('Review the guided tour'),
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Onboarding()),
+                  context,
+                  MaterialPageRoute(builder: (context) => const Onboarding()),
                 ),
               ),
               const Divider(

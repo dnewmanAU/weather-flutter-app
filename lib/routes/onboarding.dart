@@ -11,7 +11,8 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   late SharedPreferences prefs;
-  setOnboarded () async {
+
+  setOnboarded() async {
     prefs = await SharedPreferences.getInstance();
     prefs.setBool('onboarded', true);
   }
@@ -25,12 +26,11 @@ class _OnboardingState extends State<Onboarding> {
               onPressed: () {
                 setOnboarded();
                 Navigator.pushReplacement(
-                    context,
+                  context,
                   MaterialPageRoute(builder: (context) => const Home()),
                 );
               },
-              child: const Text('Onboard')
-          ),
+              child: const Text('Onboard')),
         ),
       ),
     );
