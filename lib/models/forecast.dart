@@ -2,22 +2,18 @@ import 'dart:convert';
 
 Forecast forecastFromJson(String str) => Forecast.fromJson(json.decode(str));
 
-String forecastToJson(Forecast data) => json.encode(data.toJson());
-
 class Forecast {
   Forecast({
     required this.weather,
     required this.main,
     required this.wind,
     required this.sys,
-    required this.name,
   });
 
   List<Weather> weather;
   Main main;
   Wind wind;
   Sys sys;
-  String name;
 
   factory Forecast.fromJson(Map<String, dynamic> json) => Forecast(
         weather:
@@ -25,7 +21,6 @@ class Forecast {
         main: Main.fromJson(json["main"]),
         wind: Wind.fromJson(json["wind"]),
         sys: Sys.fromJson(json["sys"]),
-        name: json["name"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,7 +28,6 @@ class Forecast {
         "main": main.toJson(),
         "wind": wind.toJson(),
         "sys": sys.toJson(),
-        "name": name,
       };
 }
 

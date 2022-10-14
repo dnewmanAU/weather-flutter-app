@@ -9,10 +9,13 @@ class LocationAPI {
         'http://api.openweathermap.org/geo/1.0/direct?q=$location&limit=1&appid=3264bceea6d5ed91f81110507f1c2fd7');
     var response = await client.get(uri);
 
-    // TODO handle non-successful status codes
     if (response.statusCode == 200) {
       var json = response.body;
+      client.close();
       return coordinatesFromJson(json);
+    } else {
+      client.close();
+      return null;
     }
   }
 }
