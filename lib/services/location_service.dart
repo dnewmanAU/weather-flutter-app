@@ -1,7 +1,7 @@
-import 'package:weather_flutter_app/models/coordinates.dart';
+import '../models/coordinates_model.dart';
 import 'package:http/http.dart' as http;
 
-class LocationAPI {
+class LocationService {
   Future<List<Coordinates>?> getCoordinates(location) async {
     var client = http.Client();
 
@@ -15,7 +15,7 @@ class LocationAPI {
       return coordinatesFromJson(json);
     } else {
       client.close();
-      return null;
+      throw Exception('Failed to receive OK');
     }
   }
 }

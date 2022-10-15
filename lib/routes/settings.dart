@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_flutter_app/routes/onboarding.dart';
-import 'package:weather_flutter_app/routes/about.dart';
+import '../routes/onboarding.dart';
+import '../routes/about.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);

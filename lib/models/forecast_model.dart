@@ -8,12 +8,14 @@ class Forecast {
     required this.main,
     required this.wind,
     required this.sys,
+    required this.timezone,
   });
 
   List<Weather> weather;
   Main main;
   Wind wind;
   Sys sys;
+  int timezone;
 
   factory Forecast.fromJson(Map<String, dynamic> json) => Forecast(
         weather:
@@ -21,6 +23,7 @@ class Forecast {
         main: Main.fromJson(json["main"]),
         wind: Wind.fromJson(json["wind"]),
         sys: Sys.fromJson(json["sys"]),
+        timezone: json["timezone"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -28,6 +31,7 @@ class Forecast {
         "main": main.toJson(),
         "wind": wind.toJson(),
         "sys": sys.toJson(),
+        "timezone": timezone,
       };
 }
 

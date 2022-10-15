@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:weather_flutter_app/routes/Home.dart';
-import 'package:weather_flutter_app/routes/onboarding.dart';
+import '../routes/Home.dart';
+import '../routes/onboarding.dart';
 
 void main() {
   runApp(const WeatherApp());

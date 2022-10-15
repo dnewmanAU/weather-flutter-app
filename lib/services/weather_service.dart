@@ -1,7 +1,7 @@
-import 'package:weather_flutter_app/models/forecast.dart';
+import '../models/forecast_model.dart';
 import 'package:http/http.dart' as http;
 
-class WeatherAPI {
+class WeatherService {
   Future<Forecast?> getForecast(lat, lon) async {
     var client = http.Client();
 
@@ -15,7 +15,7 @@ class WeatherAPI {
       return forecastFromJson(json);
     } else {
       client.close();
-      return null;
+      throw Exception('Failed to receive OK');
     }
   }
 }

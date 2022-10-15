@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../routes/settings.dart';
-import '../models/coordinates.dart';
-import '../models/forecast.dart';
-import '../services/location_api.dart';
-import '../services/weather_api.dart';
+import '../models/coordinates_model.dart';
+import '../models/forecast_model.dart';
+import '../services/location_service.dart';
+import '../services/weather_service.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class _HomeState extends State<Home> {
   Forecast? forecast;
   var lat = 0.0;
   var lon = 0.0;
-  var location = '';
+  var locationName = '';
   var weatherType = '';
   var temp = 0.0;
   var feelsLike = 0.0;
@@ -29,6 +30,7 @@ class _HomeState extends State<Home> {
   var windGust = 0.0;
   var sunrise = 0;
   var sunset = 0;
+  var timezone = 0;
   var locationSuccess = false;
   var forecastSuccess = false;
 
@@ -37,16 +39,16 @@ class _HomeState extends State<Home> {
     super.initState();
 
     // fetch latitude and longitude from API
-    getLocationOrds();
+    getLocationOrds('Gold%20Coast');
   }
 
-  getLocationOrds() async {
+  getLocationOrds(location) async {
     // also accepts postcode parsed as string
-    ords = await LocationAPI().getCoordinates('Gold%20Coast');
+    ords = await LocationService().getCoordinates(location);
     if (ords != null) {
       lat = ords?[0].lat ?? 0.0;
       lon = ords?[0].lon ?? 0.0;
-      location = ords?[0].name ?? 'Unknown';
+      locationName = ords?[0].name ?? 'Unknown';
       setState(() {
         locationSuccess = true;
         getForecast(lat, lon);
@@ -59,9 +61,8 @@ class _HomeState extends State<Home> {
   }
 
   getForecast(lat, lon) async {
-    forecast = await WeatherAPI().getForecast(lat, lon);
+    forecast = await WeatherService().getForecast(lat, lon);
     if (forecast != null) {
-      // TODO assign variables
       weatherType = forecast?.weather[0].main ?? '';
       temp = forecast?.main.temp ?? 0.0;
       feelsLike = forecast?.main.feelsLike ?? 0.0;
@@ -73,6 +74,7 @@ class _HomeState extends State<Home> {
       windGust = forecast?.wind.gust ?? 0.0;
       sunrise = forecast?.sys.sunrise ?? 0;
       sunset = forecast?.sys.sunset ?? 0;
+      timezone = forecast?.timezone ?? 0;
       setState(() {
         forecastSuccess = true;
       });
@@ -82,7 +84,7 @@ class _HomeState extends State<Home> {
       });
     }
   }
-   // TODO input box for location that fetches new weather data
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -110,7 +112,20 @@ class _HomeState extends State<Home> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(location),
+                Form(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          hintText: 'Enter a town or city',
+                        ),
+                        onFieldSubmitted: (val) => getLocationOrds(val),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(locationName),
                 Text('$lat'),
                 Text('$lon'),
                 Text('Current: $weatherType'),
@@ -122,8 +137,11 @@ class _HomeState extends State<Home> {
                 Text('Wind speed: $windSpeed'),
                 Text('Wind direction: $windDeg'),
                 Text('Wind gust: $windGust'),
-                Text('Sunrise: $sunrise'),
-                Text('Sunset: $sunset'),
+                Text(
+                    'SunriseEpoch: ${DateFormat.Hms().format(DateTime.fromMillisecondsSinceEpoch((sunrise + timezone) * 1000, isUtc: true))}'),
+                Text(
+                    'SunsetEpoch: ${DateFormat.Hms().format(DateTime.fromMillisecondsSinceEpoch((sunset + timezone) * 1000, isUtc: true))}'),
+                Text('Timezone: $timezone'),
               ],
             ),
           ),
