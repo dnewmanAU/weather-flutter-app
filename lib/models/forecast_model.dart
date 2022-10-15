@@ -1,4 +1,5 @@
 import 'dart:convert';
+// TODO make all json values null safe
 
 Forecast forecastFromJson(String str) => Forecast.fromJson(json.decode(str));
 
@@ -117,7 +118,8 @@ class Wind {
   factory Wind.fromJson(Map<String, dynamic> json) => Wind(
         speed: json["speed"].toDouble(),
         deg: json["deg"],
-        gust: json["gust"].toDouble(),
+        // TODO make all json values null safe
+        gust: (json["gust"] ?? 0.0).toDouble(),
       );
 
   Map<String, dynamic> toJson() => {

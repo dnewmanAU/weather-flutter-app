@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../routes/Home.dart';
 import '../routes/onboarding.dart';
+import '../routes/location.dart';
 
 void main() {
   runApp(const WeatherApp());
@@ -25,6 +25,7 @@ class MaterialAppWithTheme extends StatefulWidget {
 
 class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
   late SharedPreferences prefs;
+
   Future<bool> _getOnboarded() async {
     prefs = await SharedPreferences.getInstance();
     return prefs.getBool('onboarded') ?? false;
@@ -33,26 +34,25 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Weather App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.yellow,
-            foregroundColor: Colors.black,
-          ),
+      title: 'Weather App',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.yellow,
+          foregroundColor: Colors.black,
         ),
-        home: FutureBuilder<bool>(
-          future: _getOnboarded(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            // TODO error handling for async request
-            if (snapshot.data == false) {
-              return const Onboarding();
-            } else {
-              return const Home();
-            }
-          },
-        ),
+      ),
+      home: FutureBuilder<bool>(
+        future: _getOnboarded(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          // TODO error handling for async request
+          if (snapshot.data == false) {
+            return const Onboarding();
+          } else {
+            return const Location();
+          }
+        },
+      ),
     );
   }
 }
-

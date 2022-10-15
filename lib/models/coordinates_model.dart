@@ -1,4 +1,5 @@
 import 'dart:convert';
+// TODO make all json values null safe
 
 List<Coordinates> coordinatesFromJson(String str) => List<Coordinates>.from(
     json.decode(str).map((x) => Coordinates.fromJson(x)));

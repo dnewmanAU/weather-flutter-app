@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import '../routes/settings.dart';
 import '../models/coordinates_model.dart';
@@ -39,10 +40,12 @@ class _HomeState extends State<Home> {
     super.initState();
 
     // fetch latitude and longitude from API
-    getLocationOrds('Gold%20Coast');
+    getLocationOrds();
   }
 
-  getLocationOrds(location) async {
+  getLocationOrds() async {
+    final prefs = await SharedPreferences.getInstance();
+    final location = prefs.getString('location');
     // also accepts postcode parsed as string
     ords = await LocationService().getCoordinates(location);
     if (ords != null) {
@@ -112,19 +115,6 @@ class _HomeState extends State<Home> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Form(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: 'Enter a town or city',
-                        ),
-                        onFieldSubmitted: (val) => getLocationOrds(val),
-                      ),
-                    ],
-                  ),
-                ),
                 Text(locationName),
                 Text('$lat'),
                 Text('$lon'),
