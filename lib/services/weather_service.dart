@@ -15,7 +15,7 @@ class WeatherService {
       return forecastFromJson(json);
     } else {
       client.close();
-      throw Exception('Failed to receive OK');
+      return null;
     }
   }
 }

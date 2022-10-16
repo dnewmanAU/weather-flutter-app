@@ -33,121 +33,124 @@ class _HomeState extends State<Home> {
   var sunrise = 0;
   var sunset = 0;
   var timezone = 0;
-  var locationSuccess = false;
   var forecastSuccess = false;
 
-  @override
-  void initState() {
-    super.initState();
-
-    // fetch latitude and longitude from API
-    getLocationOrds();
-  }
-
-  getLocationOrds() async {
+  _getForecast() async {
     final prefs = await SharedPreferences.getInstance();
     final location = prefs.getString('location');
+
     // also accepts postcode parsed as string
     ords = await LocationService().getCoordinates(location);
     if (ords != null) {
       lat = ords?[0].lat ?? 0.0;
       lon = ords?[0].lon ?? 0.0;
       locationName = ords?[0].name ?? 'Unknown';
-      setState(() {
-        locationSuccess = true;
-        getForecast(lat, lon);
-      });
-    } else {
-      setState(() {
-        locationSuccess = false;
-      });
-    }
-  }
-
-  getForecast(lat, lon) async {
-    forecast = await WeatherService().getForecast(lat, lon);
-    if (forecast != null) {
-      weatherType = forecast?.weather[0].main ?? '';
-      temp = forecast?.main.temp ?? 0.0;
-      feelsLike = forecast?.main.feelsLike ?? 0.0;
-      tempMin = forecast?.main.tempMin ?? 0.0;
-      tempMax = forecast?.main.tempMax ?? 0.0;
-      humidity = forecast?.main.humidity ?? 0;
-      windSpeed = forecast?.wind.speed ?? 0.0;
-      windDeg = forecast?.wind.deg ?? 0;
-      windGust = forecast?.wind.gust ?? 0.0;
-      sunrise = forecast?.sys.sunrise ?? 0;
-      sunset = forecast?.sys.sunset ?? 0;
-      timezone = forecast?.timezone ?? 0;
-      setState(() {
+      forecast = await WeatherService().getForecast(lat, lon);
+      if (forecast != null) {
+        weatherType = forecast?.weather[0].main ?? '';
+        temp = forecast?.main.temp ?? 0.0;
+        feelsLike = forecast?.main.feelsLike ?? 0.0;
+        tempMin = forecast?.main.tempMin ?? 0.0;
+        tempMax = forecast?.main.tempMax ?? 0.0;
+        humidity = forecast?.main.humidity ?? 0;
+        windSpeed = forecast?.wind.speed ?? 0.0;
+        windDeg = forecast?.wind.deg ?? 0;
+        windGust = forecast?.wind.gust ?? 0.0;
+        sunrise = forecast?.sys.sunrise ?? 0;
+        sunset = forecast?.sys.sunset ?? 0;
+        timezone = forecast?.timezone ?? 0;
         forecastSuccess = true;
-      });
-    } else {
-      setState(() {
-        forecastSuccess = false;
-      });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Home'),
-          centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.settings,
-                color: Colors.black,
+    return FutureBuilder(
+      future: _getForecast(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            forecastSuccess == true) {
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(locationName),
+                centerTitle: true,
+                actions: <Widget>[
+                  IconButton(
+                    icon: const Icon(
+                      Icons.settings,
+                      color: Colors.black,
+                    ),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Settings()),
+                    ),
+                  ),
+                ],
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.search,
+                    color: Colors.black,
+                  ),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Location()),
+                  ),
+                ),
               ),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Settings()),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Current: $weatherType'),
+                    Text('Temperature: $temp'),
+                    Text('Feels like: $feelsLike'),
+                    Text('Min: $tempMin'),
+                    Text('Max: $tempMax'),
+                    Text('Humidity: $humidity'),
+                    Text('Wind speed: $windSpeed'),
+                    Text('Wind direction: $windDeg'),
+                    Text('Wind gust: $windGust'),
+                    Text(
+                        'SunriseEpoch: ${DateFormat.Hms().format(DateTime.fromMillisecondsSinceEpoch((sunrise + timezone) * 1000, isUtc: true))}'),
+                    Text(
+                        'SunsetEpoch: ${DateFormat.Hms().format(DateTime.fromMillisecondsSinceEpoch((sunset + timezone) * 1000, isUtc: true))}'),
+                    Text('Timezone: $timezone'),
+                  ],
+                ),
               ),
             ),
-          ],
-          leading: IconButton(
-            icon: const Icon(
-              Icons.search,
-              color: Colors.black,
+          );
+        } else if (snapshot.connectionState != ConnectionState.done) {
+          return const SafeArea(
+            child: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Location()),
+          );
+        } else {
+          return SafeArea(
+            child: Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text('Forecast offline'),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {});
+                      },
+                      child: const Text('Refresh'),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-        body: Center(
-          child: Visibility(
-            visible: locationSuccess && forecastSuccess,
-            replacement: const Text('Failed to load location'),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(locationName),
-                Text('$lat'),
-                Text('$lon'),
-                Text('Current: $weatherType'),
-                Text('Temperature: $temp'),
-                Text('Feels like: $feelsLike'),
-                Text('Min: $tempMin'),
-                Text('Max: $tempMax'),
-                Text('Humidity: $humidity'),
-                Text('Wind speed: $windSpeed'),
-                Text('Wind direction: $windDeg'),
-                Text('Wind gust: $windGust'),
-                Text(
-                    'SunriseEpoch: ${DateFormat.Hms().format(DateTime.fromMillisecondsSinceEpoch((sunrise + timezone) * 1000, isUtc: true))}'),
-                Text(
-                    'SunsetEpoch: ${DateFormat.Hms().format(DateTime.fromMillisecondsSinceEpoch((sunset + timezone) * 1000, isUtc: true))}'),
-                Text('Timezone: $timezone'),
-              ],
-            ),
-          ),
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 }

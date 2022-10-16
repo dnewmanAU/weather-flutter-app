@@ -11,9 +11,24 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<bool> _getDarkMode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('darkMode') ?? false;
+  }
+
+  _setDarkMode(bool darkMode) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('darkMode', darkMode);
+  }
+
   void _clearAppData() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    prefs.clear();
   }
 
   @override
@@ -28,12 +43,21 @@ class _SettingsState extends State<Settings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SwitchListTile(
-                title: Text('Theme', semanticsLabel: 'Choose theme'),
-                subtitle: Text('Light', semanticsLabel: 'Light'),
-                activeColor: Colors.green,
-                value: true,
-                onChanged: (value) => print('theme changed'),
+              FutureBuilder(
+                future: _getDarkMode(),
+                builder: (context, snapshot) {
+                  return SwitchListTile(
+                    title: const Text('Theme', semanticsLabel: 'Choose theme'),
+                    subtitle: Text(snapshot.data ?? false ? 'Dark' : 'Light'),
+                    activeColor: Colors.green,
+                    value: snapshot.data ?? false,
+                    onChanged: (value) {
+                      setState(() {
+                        _setDarkMode(value);
+                      });
+                    },
+                  );
+                },
               ),
               const Divider(
                 color: Colors.black,
@@ -97,7 +121,8 @@ class _SettingsState extends State<Settings> {
                           const confirmationDialog = SnackBar(
                             content: Text('Favourites deleted'),
                           );
-                          ScaffoldMessenger.of(context).showSnackBar(confirmationDialog);
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(confirmationDialog);
                         },
                       ),
                     ],
