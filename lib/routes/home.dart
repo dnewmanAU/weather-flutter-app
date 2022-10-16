@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import '../routes/location.dart';
 import '../routes/settings.dart';
 import '../models/coordinates_model.dart';
 import '../models/forecast_model.dart';
@@ -94,7 +95,7 @@ class _HomeState extends State<Home> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Home'),
-          centerTitle: false,
+          centerTitle: true,
           actions: <Widget>[
             IconButton(
               icon: const Icon(
@@ -107,6 +108,16 @@ class _HomeState extends State<Home> {
               ),
             ),
           ],
+          leading: IconButton(
+            icon: const Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Location()),
+            ),
+          ),
         ),
         body: Center(
           child: Visibility(

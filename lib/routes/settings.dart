@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../routes/onboarding.dart';
 import '../routes/about.dart';
 
@@ -10,6 +11,11 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  void _clearAppData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -59,6 +65,43 @@ class _SettingsState extends State<Settings> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const About()),
+                ),
+              ),
+              const Divider(
+                color: Colors.black,
+                thickness: 0.2,
+                height: 4,
+                indent: 8,
+                endIndent: 8,
+              ),
+              ListTile(
+                title: const Text('Reset'),
+                subtitle: const Text('Clear favourite locations'),
+                trailing: const Icon(Icons.warning_amber),
+                onTap: () => showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Are you sure?'),
+                    content: const Text('Cannot be undone'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('No'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      TextButton(
+                        child: const Text('Yes',
+                            style: TextStyle(color: Colors.red)),
+                        onPressed: () {
+                          _clearAppData();
+                          Navigator.pop(context);
+                          const confirmationDialog = SnackBar(
+                            content: Text('Favourites deleted'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(confirmationDialog);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
