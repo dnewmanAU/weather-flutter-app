@@ -41,6 +41,7 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
           backgroundColor: Colors.yellow,
           foregroundColor: Colors.black,
         ),
+        fontFamily: 'OpenSans',
       ),
       home: FutureBuilder<bool>(
         future: _getOnboarded(),
