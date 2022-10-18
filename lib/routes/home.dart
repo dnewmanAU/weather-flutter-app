@@ -28,8 +28,7 @@ class _HomeState extends State<Home> {
   var tempMax = 0.0;
   var humidity = 0;
   var windSpeed = 0.0;
-  var windDeg = 0;
-  var windGust = 0.0;
+  var windDeg = '';
   var sunrise = 0;
   var sunset = 0;
   var timezone = 0;
@@ -54,14 +53,20 @@ class _HomeState extends State<Home> {
         tempMax = forecast?.main.tempMax ?? 0.0;
         humidity = forecast?.main.humidity ?? 0;
         windSpeed = forecast?.wind.speed ?? 0.0;
-        windDeg = forecast?.wind.deg ?? 0;
-        windGust = forecast?.wind.gust ?? 0.0;
+        windDeg = _windDegToDirection(forecast?.wind.deg ?? 0);
         sunrise = forecast?.sys.sunrise ?? 0;
         sunset = forecast?.sys.sunset ?? 0;
         timezone = forecast?.timezone ?? 0;
         forecastSuccess = true;
       }
     }
+  }
+
+  String _windDegToDirection(deg) {
+    final direction = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    // convert wind degrees to the wind direction
+    final conversion = (deg / 45 + 0.5).floor();
+    return direction[conversion % 8];
   }
 
   @override
@@ -104,19 +109,17 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Current: $weatherType'),
-                    Text('Temperature: $temp'),
-                    Text('Feels like: $feelsLike'),
-                    Text('Min: $tempMin'),
-                    Text('Max: $tempMax'),
-                    Text('Humidity: $humidity'),
-                    Text('Wind speed: $windSpeed'),
+                    Text('Temperature: $temp°'),
+                    Text('Feels like: $feelsLike°'),
+                    Text('Min: $tempMin°'),
+                    Text('Max: $tempMax°'),
+                    Text('Humidity: $humidity%'),
+                    Text('Wind speed: $windSpeed km/h'),
                     Text('Wind direction: $windDeg'),
-                    Text('Wind gust: $windGust'),
                     Text(
-                        'SunriseEpoch: ${DateFormat.Hms().format(DateTime.fromMillisecondsSinceEpoch((sunrise + timezone) * 1000, isUtc: true))}'),
+                        'Sunrise: ${DateFormat('hh:mm a').format(DateTime.fromMillisecondsSinceEpoch((sunrise + timezone) * 1000, isUtc: true))}'),
                     Text(
-                        'SunsetEpoch: ${DateFormat.Hms().format(DateTime.fromMillisecondsSinceEpoch((sunset + timezone) * 1000, isUtc: true))}'),
-                    Text('Timezone: $timezone'),
+                        'Sunset: ${DateFormat('hh:mm a').format(DateTime.fromMillisecondsSinceEpoch((sunset + timezone) * 1000, isUtc: true))}'),
                   ],
                 ),
               ),

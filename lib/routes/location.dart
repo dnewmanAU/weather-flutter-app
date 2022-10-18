@@ -38,7 +38,10 @@ class _LocationState extends State<Location> {
   void _addLocation(String type, String location) async {
     final prefs = await SharedPreferences.getInstance();
     var locations = prefs.getStringList(type) ?? <String>[];
-    locations.add(location);
+    // unique locations only
+    if (!locations.contains(location)) {
+      locations.add(location);
+    }
     await prefs.setStringList(type, locations);
   }
 
@@ -92,7 +95,9 @@ class _LocationState extends State<Location> {
                   child: ListView(
                     children: [
                       Visibility(
-                        visible: snapshot.data?[0].length > 0,
+                        visible:
+                            snapshot.connectionState == ConnectionState.done &&
+                                snapshot.data?[0].length > 0,
                         child: Column(
                           children: const [
                             Padding(
@@ -126,9 +131,10 @@ class _LocationState extends State<Location> {
                                   icon: const Icon(Icons.star_rounded),
                                   // remove a favourite and add to recent
                                   onPressed: () {
-                                    _removeLocation('favourites', location);
-                                    _addLocation('recent', location);
-                                    setState(() {});
+                                    setState(() {
+                                      _removeLocation('favourites', location);
+                                      _addLocation('recent', location);
+                                    });
                                   }),
                               title: InkWell(
                                 child: Text(location),
@@ -144,7 +150,9 @@ class _LocationState extends State<Location> {
                           ),
                         ),
                       Visibility(
-                        visible: snapshot.data?[1].length > 0,
+                        visible:
+                            snapshot.connectionState == ConnectionState.done &&
+                                snapshot.data?[1].length > 0,
                         child: Column(
                           children: const [
                             Padding(
@@ -178,9 +186,10 @@ class _LocationState extends State<Location> {
                                 icon: const Icon(Icons.star_outline_rounded),
                                 // add a favourite and remove from recent
                                 onPressed: () {
-                                  _addLocation('favourites', location);
-                                  _removeLocation('recent', location);
-                                  setState(() {});
+                                  setState(() {
+                                    _addLocation('favourites', location);
+                                    _removeLocation('recent', location);
+                                  });
                                 },
                               ),
                               title: InkWell(
@@ -197,8 +206,8 @@ class _LocationState extends State<Location> {
                                   icon: const Icon(Icons.close_rounded),
                                   // remove from recent
                                   onPressed: () {
-                                    _removeLocation('recent', location);
-                                    setState(() {});
+                                    setState(() =>
+                                        _removeLocation('recent', location));
                                   }),
                             ),
                           ),

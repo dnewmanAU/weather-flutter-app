@@ -52,10 +52,10 @@ class Main {
   int humidity;
 
   factory Main.fromJson(Map<String, dynamic> json) => Main(
-        temp: json["temp"].toDouble(),
-        feelsLike: json["feels_like"].toDouble(),
-        tempMin: json["temp_min"].toDouble(),
-        tempMax: json["temp_max"].toDouble(),
+        temp: (json["temp"] ?? 0.0).toDouble(),
+        feelsLike: (json["feels_like"] ?? 0.0).toDouble(),
+        tempMin: (json["temp_min"] ?? 0.0).toDouble(),
+        tempMax: (json["temp_max"] ?? 0.0).toDouble(),
         humidity: json["humidity"],
       );
 
@@ -108,23 +108,18 @@ class Wind {
   Wind({
     required this.speed,
     required this.deg,
-    required this.gust,
   });
 
   double speed;
   int deg;
-  double gust;
 
   factory Wind.fromJson(Map<String, dynamic> json) => Wind(
-        speed: json["speed"].toDouble(),
+        speed: (json["speed"] ?? 0.0).toDouble(),
         deg: json["deg"],
-        // TODO make all json values null safe
-        gust: (json["gust"] ?? 0.0).toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
         "speed": speed,
         "deg": deg,
-        "gust": gust,
       };
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../routes/home.dart';
+import '../routes/location.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({Key? key}) : super(key: key);
@@ -27,7 +27,7 @@ class _OnboardingState extends State<Onboarding> {
                 setOnboarded();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const Home()),
+                  MaterialPageRoute(builder: (context) => const Location()),
                 );
               },
               child: const Text('Onboard')),
