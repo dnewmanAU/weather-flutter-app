@@ -50,7 +50,7 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
           if (snapshot.data == false) {
             return const Onboarding();
           } else {
-            return const Location();
+            return const Onboarding();
           }
         },
       ),
