@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../routes/onboarding.dart';
-import '../routes/about.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -83,12 +82,16 @@ class _SettingsState extends State<Settings> {
                 endIndent: 8,
               ),
               ListTile(
-                title: const Text('About'),
-                subtitle: const Text('View information about the app'),
+                title: const Text('Licenses'),
+                subtitle: const Text('View app licenses'),
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const About()),
+                  MaterialPageRoute(builder: (context) => const LicensePage(
+                    applicationName: 'Flutter Weather App',
+                    applicationVersion: 'Version: 1.0',
+                    applicationLegalese: 'Developed by David Newman\n{repo link here}',
+                  )),
                 ),
               ),
               const Divider(

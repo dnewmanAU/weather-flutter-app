@@ -140,12 +140,13 @@ class _HomeState extends State<Home> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    const Text('Forecast offline'),
+                    const Text('Encountered a problem'),
                     TextButton(
-                      onPressed: () {
-                        setState(() {});
-                      },
-                      child: const Text('Refresh'),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Location()),
+                      ),
+                      child: const Text('Try again'),
                     ),
                   ],
                 ),

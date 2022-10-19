@@ -38,8 +38,8 @@ class _LocationState extends State<Location> {
   void _addLocation(String type, String location) async {
     final prefs = await SharedPreferences.getInstance();
     var locations = prefs.getStringList(type) ?? <String>[];
-    // unique locations only
-    if (!locations.contains(location)) {
+    // unique locations only and ignore empty locations
+    if (!locations.contains(location) && location != '') {
       locations.add(location);
     }
     await prefs.setStringList(type, locations);
