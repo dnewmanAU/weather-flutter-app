@@ -27,24 +27,26 @@ class _OnboardingState extends State<Onboarding> {
       child: Scaffold(
         body: Column(
           children: <Widget>[
-            CarouselSlider(
-              carouselController: buttonCarouselController,
-              options: CarouselOptions(
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  viewportFraction: 1.0,
-                  enableInfiniteScroll: false,
-                  scrollPhysics: const BouncingScrollPhysics(),
-                  onPageChanged: (index, _) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  }),
-              items: [const Page1(), const Page2(), const Page3()]
-                  .map((page) => Card(
-                        color: Colors.lightBlueAccent,
-                        child: page,
-                      ))
-                  .toList(),
+            Expanded(
+              child: CarouselSlider(
+                carouselController: buttonCarouselController,
+                options: CarouselOptions(
+                    height: MediaQuery.of(context).size.height,
+                    viewportFraction: 1.0,
+                    enableInfiniteScroll: false,
+                    scrollPhysics: const BouncingScrollPhysics(),
+                    onPageChanged: (index, _) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    }),
+                items: [const Page1(), const Page2(), const Page3()]
+                    .map((page) => Container(
+                          //color: Colors.lightBlueAccent,
+                          child: page,
+                        ))
+                    .toList(),
+              ),
             ),
             Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -64,23 +66,34 @@ class _OnboardingState extends State<Onboarding> {
                           ),
                         ))
                     .toList()),
-            ElevatedButton(
-                onPressed: () {
-                  if (_currentIndex == 2) {
-                    setOnboarded();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const Location()),
-                    );
-                  } else {
-                    buttonCarouselController.nextPage(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.linear,
-                    );
-                  }
-                },
-                child: Text(_currentIndex == 2 ? 'Go' : 'Next')),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 35),
+              child: SizedBox(
+                height: 45,
+                width: 100,
+                child: ElevatedButton(
+                    onPressed: () {
+                      if (_currentIndex == 2) {
+                        setOnboarded();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Location()),
+                        );
+                      } else {
+                        buttonCarouselController.nextPage(
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.linear,
+                        );
+                      }
+                    },
+                    child: Text(
+                        _currentIndex == 2 ? 'Go' : 'Next',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -93,8 +106,21 @@ class Page1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Page 1'),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const <Widget>[
+          Icon(Icons.search, size: 200),
+          Padding(
+            padding: EdgeInsets.fromLTRB(15, 25, 15, 0),
+            child: Text(
+              'Get live forecasts of practically any town or region in the world',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 32),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -104,8 +130,21 @@ class Page2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Page 2'),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const <Widget>[
+          Icon(Icons.star_outline, size: 200),
+          Padding(
+            padding: EdgeInsets.fromLTRB(15, 25, 15, 0),
+            child: Text(
+              'Check recently viewed locations and add them to your favourites',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 32),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -115,8 +154,21 @@ class Page3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Page 3'),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const <Widget>[
+          Icon(Icons.swipe_down_outlined, size: 200),
+          Padding(
+            padding: EdgeInsets.fromLTRB(15, 25, 15, 0),
+            child: Text(
+              'Swipe down to get the latest forecast for your chosen location',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 32),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -132,12 +184,12 @@ class Indicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
-      width: 20.0,
-      height: 20.0,
+      margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 35),
+      width: 15.0,
+      height: 15.0,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: rowIndex == currentIndex ? Colors.lightBlueAccent : Colors.grey,
+        color: rowIndex == currentIndex ? Colors.blue : Colors.grey,
       ),
     );
   }

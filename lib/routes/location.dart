@@ -12,6 +12,9 @@ class Location extends StatefulWidget {
 class _LocationState extends State<Location> {
   final _textController = TextEditingController();
 
+  bool _favouritesExpanded = false;
+  bool _recentExpanded = false;
+
   @override
   void initState() {
     super.initState();
@@ -91,129 +94,151 @@ class _LocationState extends State<Location> {
               future: Future.wait(
                   [_getLocations('favourites'), _getLocations('recent')]),
               builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-                return Expanded(
-                  child: ListView(
-                    children: [
-                      Visibility(
-                        visible:
-                            snapshot.connectionState == ConnectionState.done &&
-                                snapshot.data?[0].length > 0,
-                        child: Column(
-                          children: const [
-                            Padding(
-                              padding: EdgeInsets.only(top: 25.0),
-                              child: Center(
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 5, 30, 30),
+                      child: ExpansionPanelList(
+                        expansionCallback: (int index, bool favouriteExpanded) {
+                          setState(() {
+                            _favouritesExpanded = !favouriteExpanded;
+                          });
+                        },
+                        children: [
+                          //for (var location in snapshot.data?[1] ?? <String>[])
+                          ExpansionPanel(
+                            headerBuilder: (context, isExpanded) {
+                              return const Center(
                                   child: Text(
                                 'Favourites',
                                 style: TextStyle(fontSize: 20),
-                              )),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
-                              child: Divider(
-                                color: Colors.blue,
-                                thickness: 1.3,
-                                height: 5,
-                                indent: 12,
-                                endIndent: 12,
+                              ));
+                            },
+                            body: Padding(
+                              padding: const EdgeInsets.only(bottom: 35),
+                              child: Column(
+                                children: [
+                                  for (var location
+                                      in snapshot.data?[0] ?? <String>[])
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0, horizontal: 15.0),
+                                      child: Card(
+                                        child: ListTile(
+                                          leading: IconButton(
+                                              icon: const Icon(
+                                                  Icons.star_rounded),
+                                              // remove a favourite and add to recent
+                                              onPressed: () {
+                                                setState(() {
+                                                  _removeLocation(
+                                                      'favourites', location);
+                                                  _addLocation(
+                                                      'recent', location);
+                                                });
+                                              }),
+                                          title: InkWell(
+                                            child: Text(location),
+                                            onTap: () {
+                                              _setLocation(location);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const Home()));
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      for (var location in snapshot.data?[0] ?? <String>[])
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5.0, horizontal: 15.0),
-                          child: Card(
-                            child: ListTile(
-                              leading: IconButton(
-                                  icon: const Icon(Icons.star_rounded),
-                                  // remove a favourite and add to recent
-                                  onPressed: () {
-                                    setState(() {
-                                      _removeLocation('favourites', location);
-                                      _addLocation('recent', location);
-                                    });
-                                  }),
-                              title: InkWell(
-                                child: Text(location),
-                                onTap: () {
-                                  _setLocation(location);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const Home()));
-                                },
-                              ),
-                            ),
+                            isExpanded: _favouritesExpanded,
+                            backgroundColor: Colors.grey,
+                            canTapOnHeader: true,
                           ),
-                        ),
-                      Visibility(
-                        visible:
-                            snapshot.connectionState == ConnectionState.done &&
-                                snapshot.data?[1].length > 0,
-                        child: Column(
-                          children: const [
-                            Padding(
-                              padding: EdgeInsets.only(top: 25.0),
-                              child: Center(
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 5, 30, 30),
+                      child: ExpansionPanelList(
+                        expansionCallback: (_, bool recentExpanded) {
+                          setState(() {
+                            _recentExpanded = !recentExpanded;
+                          });
+                        },
+                        children: [
+                          //for (var location in snapshot.data?[1] ?? <String>[])
+                          ExpansionPanel(
+                            headerBuilder: (context, isExpanded) {
+                              return const Center(
                                   child: Text(
                                 'Recent',
                                 style: TextStyle(fontSize: 20),
-                              )),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
-                              child: Divider(
-                                color: Colors.blue,
-                                thickness: 1.3,
-                                height: 5,
-                                indent: 12,
-                                endIndent: 12,
+                              ));
+                            },
+                            body: Padding(
+                              padding: const EdgeInsets.only(bottom: 35),
+                              child: Column(
+                                children: [
+                                  for (var location
+                                      in snapshot.data?[1] ?? <String>[])
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0, horizontal: 15.0),
+                                      child: Card(
+                                        child: ListTile(
+                                          leading: IconButton(
+                                            icon: const Icon(
+                                                Icons.star_outline_rounded),
+                                            // add a favourite and remove from recent
+                                            onPressed: () {
+                                              setState(() {
+                                                _addLocation(
+                                                    'favourites', location);
+                                                _removeLocation(
+                                                    'recent', location);
+                                              });
+                                            },
+                                          ),
+                                          title: InkWell(
+                                            child: Text(location),
+                                            onTap: () {
+                                              _setLocation(location);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const Home()));
+                                            },
+                                          ),
+                                          trailing: IconButton(
+                                            icon:
+                                                const Icon(Icons.close_rounded),
+                                            onPressed: () {
+                                              setState(() {
+                                                _removeLocation(
+                                                    'recent', location);
+                                              });
+                                            },
+                                            // remove from recent
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      for (var location in snapshot.data?[1] ?? <String>[])
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5.0, horizontal: 15.0),
-                          child: Card(
-                            child: ListTile(
-                              leading: IconButton(
-                                icon: const Icon(Icons.star_outline_rounded),
-                                // add a favourite and remove from recent
-                                onPressed: () {
-                                  setState(() {
-                                    _addLocation('favourites', location);
-                                    _removeLocation('recent', location);
-                                  });
-                                },
-                              ),
-                              title: InkWell(
-                                child: Text(location),
-                                onTap: () {
-                                  _setLocation(location);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const Home()));
-                                },
-                              ),
-                              trailing: IconButton(
-                                  icon: const Icon(Icons.close_rounded),
-                                  // remove from recent
-                                  onPressed: () {
-                                    setState(() =>
-                                        _removeLocation('recent', location));
-                                  }),
-                            ),
+                            isExpanded: _recentExpanded,
+                            backgroundColor: Colors.grey,
+                            canTapOnHeader: true,
                           ),
-                        ),
-                    ],
-                  ),
+                        ],
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
