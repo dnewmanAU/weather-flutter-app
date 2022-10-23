@@ -1,8 +1,8 @@
-import '../models/forecast_model.dart';
+import '../models/weather_model.dart';
 import 'package:http/http.dart' as http;
 
 class WeatherService {
-  Future<Forecast?> getForecast(lat, lon) async {
+  Future<Weather?> getWeather(lat, lon) async {
     var client = http.Client();
 
     var uri = Uri.parse(
@@ -12,7 +12,7 @@ class WeatherService {
     if (response.statusCode == 200) {
       var json = response.body;
       client.close();
-      return forecastFromJson(json);
+      return weatherFromJson(json);
     } else {
       client.close();
       return null;

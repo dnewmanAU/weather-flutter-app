@@ -1,10 +1,11 @@
 import 'dart:convert';
-// TODO make all json values null safe
 
-Forecast forecastFromJson(String str) => Forecast.fromJson(json.decode(str));
+Weather weatherFromJson(String str) => Weather.fromJson(json.decode(str));
 
-class Forecast {
-  Forecast({
+String weatherToJson(Weather data) => json.encode(data.toJson());
+
+class Weather {
+  Weather({
     required this.weather,
     required this.main,
     required this.wind,
@@ -12,15 +13,15 @@ class Forecast {
     required this.timezone,
   });
 
-  List<Weather> weather;
+  List<WeatherElement> weather;
   Main main;
   Wind wind;
   Sys sys;
   int timezone;
 
-  factory Forecast.fromJson(Map<String, dynamic> json) => Forecast(
-        weather:
-            List<Weather>.from(json["weather"].map((x) => Weather.fromJson(x))),
+  factory Weather.fromJson(Map<String, dynamic> json) => Weather(
+        weather: List<WeatherElement>.from(
+            json["weather"].map((x) => WeatherElement.fromJson(x))),
         main: Main.fromJson(json["main"]),
         wind: Wind.fromJson(json["wind"]),
         sys: Sys.fromJson(json["sys"]),
@@ -40,30 +41,22 @@ class Main {
   Main({
     required this.temp,
     required this.feelsLike,
-    required this.tempMin,
-    required this.tempMax,
     required this.humidity,
   });
 
   double temp;
   double feelsLike;
-  double tempMin;
-  double tempMax;
   int humidity;
 
   factory Main.fromJson(Map<String, dynamic> json) => Main(
         temp: (json["temp"] ?? 0.0).toDouble(),
         feelsLike: (json["feels_like"] ?? 0.0).toDouble(),
-        tempMin: (json["temp_min"] ?? 0.0).toDouble(),
-        tempMax: (json["temp_max"] ?? 0.0).toDouble(),
         humidity: json["humidity"],
       );
 
   Map<String, dynamic> toJson() => {
         "temp": temp,
         "feels_like": feelsLike,
-        "temp_min": tempMin,
-        "temp_max": tempMax,
         "humidity": humidity,
       };
 }
@@ -88,19 +81,23 @@ class Sys {
       };
 }
 
-class Weather {
-  Weather({
+class WeatherElement {
+  WeatherElement({
     required this.main,
+    required this.description,
   });
 
   String main;
+  String description;
 
-  factory Weather.fromJson(Map<String, dynamic> json) => Weather(
+  factory WeatherElement.fromJson(Map<String, dynamic> json) => WeatherElement(
         main: json["main"],
+        description: json["description"],
       );
 
   Map<String, dynamic> toJson() => {
         "main": main,
+        "description": description,
       };
 }
 

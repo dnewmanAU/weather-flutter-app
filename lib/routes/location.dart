@@ -99,13 +99,12 @@ class _LocationState extends State<Location> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(30, 5, 30, 30),
                       child: ExpansionPanelList(
-                        expansionCallback: (int index, bool favouriteExpanded) {
+                        expansionCallback: (_, bool favouritesExpanded) {
                           setState(() {
-                            _favouritesExpanded = !favouriteExpanded;
+                            _favouritesExpanded = !favouritesExpanded;
                           });
                         },
                         children: [
-                          //for (var location in snapshot.data?[1] ?? <String>[])
                           ExpansionPanel(
                             headerBuilder: (context, isExpanded) {
                               return const Center(
@@ -115,7 +114,7 @@ class _LocationState extends State<Location> {
                               ));
                             },
                             body: Padding(
-                              padding: const EdgeInsets.only(bottom: 35),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: Column(
                                 children: [
                                   for (var location
@@ -170,7 +169,6 @@ class _LocationState extends State<Location> {
                           });
                         },
                         children: [
-                          //for (var location in snapshot.data?[1] ?? <String>[])
                           ExpansionPanel(
                             headerBuilder: (context, isExpanded) {
                               return const Center(
@@ -180,7 +178,7 @@ class _LocationState extends State<Location> {
                               ));
                             },
                             body: Padding(
-                              padding: const EdgeInsets.only(bottom: 35),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: Column(
                                 children: [
                                   for (var location
@@ -217,13 +215,13 @@ class _LocationState extends State<Location> {
                                           trailing: IconButton(
                                             icon:
                                                 const Icon(Icons.close_rounded),
+                                            // remove from recent
                                             onPressed: () {
                                               setState(() {
                                                 _removeLocation(
                                                     'recent', location);
                                               });
                                             },
-                                            // remove from recent
                                           ),
                                         ),
                                       ),
