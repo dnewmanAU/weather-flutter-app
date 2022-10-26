@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
   var feelsLike = 0.0;
   var humidity = 0;
   var windSpeed = 0.0;
-  var windDeg = '';
+  var windDirection = '';
   var sunrise = 0;
   var sunset = 0;
   var timezone = 0;
@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
         feelsLike = weather?.main.feelsLike ?? 0.0;
         humidity = weather?.main.humidity ?? 0;
         windSpeed = weather?.wind.speed ?? 0.0;
-        windDeg = _windDegToDirection(weather?.wind.deg ?? 0);
+        windDirection = _windDegToDirection(weather?.wind.deg ?? 0);
         sunrise = weather?.sys.sunrise ?? 0;
         sunset = weather?.sys.sunset ?? 0;
         timezone = weather?.timezone ?? 0;
@@ -105,6 +105,29 @@ class _HomeState extends State<Home> {
     return direction[conversion % 8];
   }
 
+  IconData _getWindIcon(direction) {
+    switch (direction) {
+      case 'N':
+        return WeatherIcons.wind_deg_180;
+      case 'NE':
+        return WeatherIcons.wind_deg_225;
+      case 'E':
+        return WeatherIcons.wind_deg_270;
+      case 'SE':
+        return WeatherIcons.wind_deg_315;
+      case 'S':
+        return WeatherIcons.wind_deg_0;
+      case 'SW':
+        return WeatherIcons.wind_deg_45;
+      case 'W':
+        return WeatherIcons.wind_deg_90;
+      case 'NW':
+        return WeatherIcons.wind_deg_135;
+      default:
+        return WeatherIcons.windy;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -121,7 +144,6 @@ class _HomeState extends State<Home> {
                   IconButton(
                     icon: const Icon(
                       Icons.settings,
-                      color: Colors.black,
                     ),
                     onPressed: () => Navigator.push(
                       context,
@@ -132,7 +154,6 @@ class _HomeState extends State<Home> {
                 leading: IconButton(
                   icon: const Icon(
                     Icons.search,
-                    color: Colors.black,
                   ),
                   onPressed: () => Navigator.push(
                     context,
@@ -140,59 +161,113 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      contentPadding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width / 3),
-                      title: Text(
-                        '$temp°',
-                        style: const TextStyle(fontSize: 56),
-                      ),
-                      subtitle: Text(
-                        'Feels like $feelsLike°',
-                        style: const TextStyle(fontSize: 22),
-                      ),
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text(
+                    'Current temperature',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  ListTile(
+                    contentPadding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width / 3),
+                    title: Text(
+                      '$temp°',
+                      style: const TextStyle(fontSize: 56),
                     ),
-                    const Divider(
-                      indent: 50,
-                      endIndent: 50,
-                      color: Colors.grey,
-                      thickness: 1.5,
-                      height: 30,
+                    subtitle: Text(
+                      'Feels like $feelsLike°',
+                      style: const TextStyle(fontSize: 22),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 40),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.only(left: 25),
-                        title: Text(
-                          weatherType,
-                          style: const TextStyle(fontSize: 28),
+                  ),
+                  const Divider(
+                    indent: 50,
+                    endIndent: 50,
+                    color: Colors.grey,
+                    thickness: 1.5,
+                    height: 30,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 20, bottom: 20),
+                        child: Text(
+                          'Current weather',
+                          style: TextStyle(fontSize: 18),
                         ),
+                      ),
+                      ListTile(
+                        leading: BoxedIcon(
+                          _getWeatherIcon(weatherType),
+                          size: 32,
+                        ),
+                        title: Text(weatherType),
                         subtitle: Text(
-                          '${weatherDetail[0].toUpperCase()}${weatherDetail.substring(1).toLowerCase()}',
-                          style: const TextStyle(fontSize: 22),
+                            '${weatherDetail[0].toUpperCase()}${weatherDetail.substring(1).toLowerCase()}'),
+                      ),
+                      ListTile(
+                        leading: const BoxedIcon(
+                          WeatherIcons.humidity,
+                          size: 32,
                         ),
-                        trailing: Padding(
-                          padding: const EdgeInsets.only(right: 25),
-                          child: BoxedIcon(
-                            size: 40,
-                            _getWeatherIcon(weatherType),
-                          ),
+                        title: Text('$humidity %'),
+                        subtitle: const Text('Humidity'),
+                      ),
+                      ListTile(
+                        leading: BoxedIcon(
+                          _getWindIcon(windDirection),
+                          size: 32,
+                        ),
+                        title: Text('$windDirection $windSpeed km/h'),
+                        subtitle: const Text('Wind'),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    indent: 50,
+                    endIndent: 50,
+                    color: Colors.grey,
+                    thickness: 1.5,
+                    height: 30,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 20, bottom: 20),
+                        child: Text(
+                          'Daylight',
+                          style: TextStyle(fontSize: 18),
                         ),
                       ),
-                    ),
-                    Text('Humidity: $humidity%'),
-                    Text('Wind speed: $windSpeed km/h'),
-                    Text('Wind direction: $windDeg'),
-                    Text(
-                        'Sunrise: ${DateFormat('hh:mm a').format(DateTime.fromMillisecondsSinceEpoch((sunrise + timezone) * 1000, isUtc: true))}'),
-                    Text(
-                        'Sunset: ${DateFormat('hh:mm a').format(DateTime.fromMillisecondsSinceEpoch((sunset + timezone) * 1000, isUtc: true))}'),
-                  ],
-                ),
+                      ListTile(
+                        leading: const BoxedIcon(
+                          WeatherIcons.sunrise,
+                          size: 32,
+                        ),
+                        title: Text(DateFormat('hh:mm a').format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                (sunrise + timezone) * 1000,
+                                isUtc: true))),
+                        subtitle: const Text('Sunrise'),
+                      ),
+                      ListTile(
+                        leading: const BoxedIcon(
+                          WeatherIcons.sunset,
+                          size: 32,
+                        ),
+                        title: Text(DateFormat('hh:mm a').format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                (sunset + timezone) * 1000,
+                                isUtc: true))),
+                        subtitle: const Text('Sunset'),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           );

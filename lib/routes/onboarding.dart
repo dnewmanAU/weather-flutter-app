@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import '../providers/onboarded_provider.dart';
 import '../routes/location.dart';
 
 class Onboarding extends StatefulWidget {
@@ -15,11 +17,6 @@ class _OnboardingState extends State<Onboarding> {
   late SharedPreferences prefs;
 
   var _currentIndex = 0;
-
-  setOnboarded() async {
-    prefs = await SharedPreferences.getInstance();
-    prefs.setBool('onboarded', true);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,25 +69,26 @@ class _OnboardingState extends State<Onboarding> {
                 height: 45,
                 width: 100,
                 child: ElevatedButton(
-                    onPressed: () {
-                      if (_currentIndex == 2) {
-                        setOnboarded();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Location()),
-                        );
-                      } else {
-                        buttonCarouselController.nextPage(
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.linear,
-                        );
-                      }
-                    },
-                    child: Text(
-                        _currentIndex == 2 ? 'Go' : 'Next',
-                      style: const TextStyle(fontSize: 20),
-                    ),
+                  onPressed: () {
+                    if (_currentIndex == 2) {
+                      Provider.of<Onboard>(context, listen: false)
+                          .setOnboarded(true);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Location()),
+                      );
+                    } else {
+                      buttonCarouselController.nextPage(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.linear,
+                      );
+                    }
+                  },
+                  child: Text(
+                    _currentIndex == 2 ? 'Go' : 'Next',
+                    style: const TextStyle(fontSize: 20),
+                  ),
                 ),
               ),
             ),

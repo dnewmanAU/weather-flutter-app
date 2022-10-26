@@ -15,6 +15,8 @@ class _SettingsState extends State<Settings> {
     super.initState();
   }
 
+  late SharedPreferences _prefs;
+
   Future<bool> _getDarkMode() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('darkMode') ?? false;
@@ -87,11 +89,13 @@ class _SettingsState extends State<Settings> {
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LicensePage(
-                    applicationName: 'Flutter Weather App',
-                    applicationVersion: 'Version: 1.0',
-                    applicationLegalese: 'Developed by David Newman\n{repo link here}',
-                  )),
+                  MaterialPageRoute(
+                      builder: (context) => const LicensePage(
+                            applicationName: 'Flutter Weather App',
+                            applicationVersion: 'Version: 1.0',
+                            applicationLegalese:
+                                'Developed by David Newman\n{repo link here}',
+                          )),
                 ),
               ),
               const Divider(
@@ -137,5 +141,18 @@ class _SettingsState extends State<Settings> {
         ),
       ),
     );
+  }
+}
+
+class AppTheme with ChangeNotifier {
+  static bool _isDark = true;
+
+  ThemeMode currentTheme() {
+    return _isDark ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  void switchTheme() {
+    _isDark = !_isDark;
+    notifyListeners();
   }
 }
