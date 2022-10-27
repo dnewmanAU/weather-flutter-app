@@ -1,32 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../routes/onboarding.dart';
+import '../providers/preferences.dart';
+import '../routes/onboard.dart';
 
 class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+  final SharedPreferences prefs;
+
+  const Settings({Key? key, required this.prefs}) : super(key: key);
 
   @override
   State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  late SharedPreferences _prefs;
-
-  Future<bool> _getDarkMode() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('darkMode') ?? false;
-  }
-
-  _setDarkMode(bool darkMode) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('darkMode', darkMode);
-  }
-
   void _clearAppData() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
@@ -44,20 +31,17 @@ class _SettingsState extends State<Settings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              FutureBuilder(
-                future: _getDarkMode(),
-                builder: (context, snapshot) {
-                  return SwitchListTile(
-                    title: const Text('Theme', semanticsLabel: 'Choose theme'),
-                    subtitle: Text(snapshot.data ?? false ? 'Dark' : 'Light'),
-                    activeColor: Colors.green,
-                    value: snapshot.data ?? false,
-                    onChanged: (value) {
-                      setState(() {
-                        _setDarkMode(value);
-                      });
-                    },
-                  );
+              SwitchListTile(
+                title: const Text('Theme', semanticsLabel: 'Choose theme'),
+                subtitle: Text(context.watch<Preferences>().themeType),
+                activeColor: Colors.green,
+                value: context.watch<Preferences>().themeType == 'Light' ? false : true,
+                onChanged: (value) {
+                  if (value == false) {
+                    context.read<Preferences>().themeType = 'Light';
+                  } else {
+                    context.read<Preferences>().themeType = 'Dark';
+                  }
                 },
               ),
               const Divider(
@@ -73,7 +57,7 @@ class _SettingsState extends State<Settings> {
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Onboarding()),
+                  MaterialPageRoute(builder: (context) => Onboard(prefs: widget.prefs)),
                 ),
               ),
               const Divider(
@@ -141,18 +125,5 @@ class _SettingsState extends State<Settings> {
         ),
       ),
     );
-  }
-}
-
-class AppTheme with ChangeNotifier {
-  static bool _isDark = true;
-
-  ThemeMode currentTheme() {
-    return _isDark ? ThemeMode.dark : ThemeMode.light;
-  }
-
-  void switchTheme() {
-    _isDark = !_isDark;
-    notifyListeners();
   }
 }

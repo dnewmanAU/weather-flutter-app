@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 import 'package:weather_icons/weather_icons.dart';
-import '../routes/location.dart';
-import '../routes/settings.dart';
+import 'package:intl/intl.dart';
+import '../providers/preferences.dart';
 import '../models/coordinates_model.dart';
 import '../models/weather_model.dart';
 import '../services/location_service.dart';
 import '../services/weather_service.dart';
+import '../routes/location.dart';
+import '../routes/settings.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  final SharedPreferences prefs;
+
+  const Home({Key? key, required this.prefs}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -35,11 +39,9 @@ class _HomeState extends State<Home> {
   var weatherSuccess = false;
 
   _getWeather() async {
-    final prefs = await SharedPreferences.getInstance();
-    final location = prefs.getString('location');
-
     // also accepts postcode parsed as string
-    ords = await LocationService().getCoordinates(location);
+    ords = await LocationService()
+        .getCoordinates(context.read<Preferences>().location);
     if (ords != null) {
       lat = ords?[0].lat ?? 0.0;
       lon = ords?[0].lon ?? 0.0;
@@ -147,7 +149,7 @@ class _HomeState extends State<Home> {
                     ),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Settings()),
+                      MaterialPageRoute(builder: (context) => Settings(prefs: widget.prefs)),
                     ),
                   ),
                 ],
@@ -157,7 +159,7 @@ class _HomeState extends State<Home> {
                   ),
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Location()),
+                    MaterialPageRoute(builder: (context) => Location(prefs: widget.prefs)),
                   ),
                 ),
               ),
@@ -291,7 +293,7 @@ class _HomeState extends State<Home> {
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Location()),
+                            builder: (context) => Location(prefs: widget.prefs)),
                       ),
                       child: const Text('Try again'),
                     ),

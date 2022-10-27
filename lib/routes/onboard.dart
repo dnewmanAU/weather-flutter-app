@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../providers/onboarded_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../providers/preferences.dart';
+import '../widgets/onboard/page_1.dart';
+import '../widgets/onboard/page_2.dart';
+import '../widgets/onboard/page_3.dart';
+import '../widgets/onboard/page_indicator.dart';
 import '../routes/location.dart';
 
-class Onboarding extends StatefulWidget {
-  const Onboarding({Key? key}) : super(key: key);
+class Onboard extends StatefulWidget {
+  final SharedPreferences prefs;
+
+  const Onboard({Key? key, required this.prefs}) : super(key: key);
 
   @override
-  State<Onboarding> createState() => _OnboardingState();
+  State<Onboard> createState() => _OnboardState();
 }
 
-class _OnboardingState extends State<Onboarding> {
+class _OnboardState extends State<Onboard> {
   CarouselController buttonCarouselController = CarouselController();
-  late SharedPreferences prefs;
-
   var _currentIndex = 0;
 
   @override
@@ -71,12 +75,11 @@ class _OnboardingState extends State<Onboarding> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_currentIndex == 2) {
-                      Provider.of<Onboard>(context, listen: false)
-                          .setOnboarded(true);
+                      context.read<Preferences>().onboardedStatus = true;
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Location()),
+                            builder: (context) => Location(prefs: widget.prefs)),
                       );
                     } else {
                       buttonCarouselController.nextPage(
@@ -94,100 +97,6 @@ class _OnboardingState extends State<Onboarding> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class Page1 extends StatelessWidget {
-  const Page1({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          Icon(Icons.search, size: 200),
-          Padding(
-            padding: EdgeInsets.fromLTRB(15, 25, 15, 0),
-            child: Text(
-              'Get live forecasts of practically any town or region in the world',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 32),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Page2 extends StatelessWidget {
-  const Page2({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          Icon(Icons.star_outline, size: 200),
-          Padding(
-            padding: EdgeInsets.fromLTRB(15, 25, 15, 0),
-            child: Text(
-              'Check recently viewed locations and add them to your favourites',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 32),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Page3 extends StatelessWidget {
-  const Page3({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          Icon(Icons.swipe_down_outlined, size: 200),
-          Padding(
-            padding: EdgeInsets.fromLTRB(15, 25, 15, 0),
-            child: Text(
-              'Swipe down to get the latest forecast for your chosen location',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 32),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Indicator extends StatelessWidget {
-  const Indicator(
-      {Key? key, required this.rowIndex, required this.currentIndex})
-      : super(key: key);
-
-  final int rowIndex;
-  final int currentIndex;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 35),
-      width: 15.0,
-      height: 15.0,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: rowIndex == currentIndex ? Colors.blue : Colors.grey,
       ),
     );
   }
