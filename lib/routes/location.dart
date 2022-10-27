@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/preferences.dart';
 import '../widgets/location/search_location.dart';
 import '../../routes/home.dart';
 
 class Location extends StatefulWidget {
-  final SharedPreferences prefs;
-
-  const Location({Key? key, required this.prefs}) : super(key: key);
+  const Location({Key? key}) : super(key: key);
 
   @override
   State<Location> createState() => _LocationState();
@@ -26,7 +23,7 @@ class _LocationState extends State<Location> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              SearchLocation(prefs: widget.prefs),
+              const SearchLocation(),
               Column(
                 children: [
                   Padding(
@@ -82,8 +79,8 @@ class _LocationState extends State<Location> {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                    builder: (context) => Home(
-                                                        prefs: widget.prefs)));
+                                                    builder: (context) =>
+                                                        const Home()));
                                           },
                                         ),
                                       ),
@@ -154,8 +151,8 @@ class _LocationState extends State<Location> {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                    builder: (context) => Home(
-                                                        prefs: widget.prefs)));
+                                                    builder: (context) =>
+                                                        const Home()));
                                           },
                                         ),
                                         trailing: IconButton(

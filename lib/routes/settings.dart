@@ -5,9 +5,7 @@ import '../providers/preferences.dart';
 import '../routes/onboard.dart';
 
 class Settings extends StatefulWidget {
-  final SharedPreferences prefs;
-
-  const Settings({Key? key, required this.prefs}) : super(key: key);
+  const Settings({Key? key}) : super(key: key);
 
   @override
   State<Settings> createState() => _SettingsState();
@@ -35,7 +33,9 @@ class _SettingsState extends State<Settings> {
                 title: const Text('Theme', semanticsLabel: 'Choose theme'),
                 subtitle: Text(context.watch<Preferences>().themeType),
                 activeColor: Colors.green,
-                value: context.watch<Preferences>().themeType == 'Light' ? false : true,
+                value: context.watch<Preferences>().themeType == 'Light'
+                    ? false
+                    : true,
                 onChanged: (value) {
                   if (value == false) {
                     context.read<Preferences>().themeType = 'Light';
@@ -57,7 +57,7 @@ class _SettingsState extends State<Settings> {
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Onboard(prefs: widget.prefs)),
+                  MaterialPageRoute(builder: (context) => const Onboard()),
                 ),
               ),
               const Divider(

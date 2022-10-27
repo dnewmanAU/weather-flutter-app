@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:intl/intl.dart';
 import '../providers/preferences.dart';
@@ -12,9 +11,7 @@ import '../routes/location.dart';
 import '../routes/settings.dart';
 
 class Home extends StatefulWidget {
-  final SharedPreferences prefs;
-
-  const Home({Key? key, required this.prefs}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -149,7 +146,7 @@ class _HomeState extends State<Home> {
                     ),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Settings(prefs: widget.prefs)),
+                      MaterialPageRoute(builder: (context) => const Settings()),
                     ),
                   ),
                 ],
@@ -159,7 +156,7 @@ class _HomeState extends State<Home> {
                   ),
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Location(prefs: widget.prefs)),
+                    MaterialPageRoute(builder: (context) => const Location()),
                   ),
                 ),
               ),
@@ -293,7 +290,7 @@ class _HomeState extends State<Home> {
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Location(prefs: widget.prefs)),
+                            builder: (context) => const Location()),
                       ),
                       child: const Text('Try again'),
                     ),

@@ -82,9 +82,9 @@ class _WeatherAppState extends State<WeatherApp> {
     return Consumer<Preferences>(
       builder: (context, preferences, child) {
         if (preferences.onboardedStatus == false) {
-          return Onboard(prefs: widget.prefs);
+          return const Onboard();
         } else {
-          return Location(prefs: widget.prefs);
+          return const Location();
         }
       },
     );

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/preferences.dart';
 import '../../routes/home.dart';
 
 class SearchLocation extends StatefulWidget {
-  final SharedPreferences prefs;
-
-  const SearchLocation({Key? key, required this.prefs}) : super(key: key);
+  const SearchLocation({Key? key}) : super(key: key);
 
   @override
   State<SearchLocation> createState() => _SearchLocationState();
@@ -51,10 +48,8 @@ class _SearchLocationState extends State<SearchLocation> {
                 // add to recent
                 context.read<Preferences>().addRecent = _textController.text;
               }
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Home(prefs: widget.prefs)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Home()));
             },
           ),
         ],

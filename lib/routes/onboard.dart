@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/preferences.dart';
 import '../widgets/onboard/page_1.dart';
 import '../widgets/onboard/page_2.dart';
@@ -10,9 +9,7 @@ import '../widgets/onboard/page_indicator.dart';
 import '../routes/location.dart';
 
 class Onboard extends StatefulWidget {
-  final SharedPreferences prefs;
-
-  const Onboard({Key? key, required this.prefs}) : super(key: key);
+  const Onboard({Key? key}) : super(key: key);
 
   @override
   State<Onboard> createState() => _OnboardState();
@@ -79,7 +76,7 @@ class _OnboardState extends State<Onboard> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Location(prefs: widget.prefs)),
+                            builder: (context) => const Location()),
                       );
                     } else {
                       buttonCarouselController.nextPage(
